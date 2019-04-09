@@ -1,0 +1,6 @@
+Ellie,Scooter,10
+Scooter,Ellie,9
+Roland,Lilith,5
+Lilith,Roland,8
+Scooter,Daisy,9
+Daisy,Scooter,1
