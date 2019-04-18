@@ -53,7 +53,8 @@ def menu(all_users, user_relationships):
     print("What do you want to do?")
     print("1) Check if user exists")
     print("2) Check connection between users")
-    print("3) Quit")
+    print("3) Find best friend chain")
+    print("4) Quit")
     selection = int(input("> "))
     if(selection == 1):
         user = input("what user? ")
@@ -76,6 +77,18 @@ def menu(all_users, user_relationships):
             print("The connection from "+user1+" to "+user2+" has weight "+str(score))
         menu(all_users, user_relationships)
     if(selection == 3):
+        users = input("what users (separated by spaces)?")
+        users = users.split()
+        user1 = users[0]
+        user2 = users[1]
+        if(user1 not in all_users or user2 not in all_users):
+            print("Error: one of these users does not exist.")
+        else:
+            user1_index = all_users[user1]
+            user2_index = all_users[user2]
+            chain = best_friend(user1_index, user2_index, all_users, user_relationships)
+            
+    if(selection == 4):
         return
 
 def invert_relationships(user_relationships):
@@ -91,8 +104,7 @@ def invert_relationships(user_relationships):
         inverted_user_relationships.append(new_row)
     return inverted_user_relationships
 
-# def best_friend(user_relationships):
-#     for row in user_relationships:
+def best_friend(user_index1, user_index2, all_users, user_relationships):
 
 
 def main():
