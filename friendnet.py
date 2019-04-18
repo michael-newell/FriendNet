@@ -78,12 +78,31 @@ def menu(all_users, user_relationships):
     if(selection == 3):
         return
 
+def invert_relationships(user_relationships):
+    inverted_user_relationships = []
+    for row in user_relationships:
+        new_row = []
+        for relationship in row:
+            if (relationship == 0):
+                new_row.append(0)
+            else:
+                new_relationship = 11 - relationship
+                new_row.append(new_relationship)
+        inverted_user_relationships.append(new_row)
+    return inverted_user_relationships
+
+# def best_friend(user_relationships):
+#     for row in user_relationships:
 
 
 def main():
     data = read_file("friends.txt")
     all_users, user_relationships = create_user_data(data)
-    menu(all_users, user_relationships)
+    print(user_relationships)
+    invert = invert_relationships(user_relationships)
+    print(invert)
+    # menu(all_users, user_relationships)
+
 
 if __name__ == "__main__":
     main()
