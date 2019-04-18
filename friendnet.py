@@ -13,6 +13,7 @@
 # Popularity Score:
 # See the average score of people who have you in their friend list.
 # Loops through entire graph and determines average score for each person on the graph.
+import math
 
 def read_file(filename):
     data = []
@@ -105,15 +106,33 @@ def invert_relationships(user_relationships):
     return inverted_user_relationships
 
 def best_friend(user_index1, user_index2, all_users, user_relationships):
-
-
+	relationships = invert_relationships(user_relationships)
+	distances = {}
+	distances[user_index2] = math.inf
+	prevUsers = {}
+	visited = [user_index1]
+	user = user_index1
+	minimum = math.inf
+    
+	for i in range(len(relationships[user_index1])):
+		distances[i] = relationships[user_index1][i]
+    	
+	while len(visited) != len(relationships[user_index1]):
+		#minimum = math.inf
+		for i in relationships[user]:
+			if i != 0 and (relationships[user].index(i) not in visited):
+				if i < minimum:
+					minimum = i
+		index = relationships[user].index(minimum)
+		visited.append(index)
+		distances[index] = min(relationships[user][index] + distances[index], distances[index])
+		user = index
+    	
 def main():
     data = read_file("friends.txt")
     all_users, user_relationships = create_user_data(data)
-    print(user_relationships)
     invert = invert_relationships(user_relationships)
-    print(invert)
-    # menu(all_users, user_relationships)
+    menu(all_users, user_relationships)
 
 
 if __name__ == "__main__":
