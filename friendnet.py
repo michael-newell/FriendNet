@@ -88,6 +88,7 @@ def menu(all_users, user_relationships):
             user1_index = all_users[user1]
             user2_index = all_users[user2]
             chain = best_friend(user1_index, user2_index, all_users, user_relationships)
+            print(chain)
             
     if(selection == 4):
         return
@@ -105,28 +106,85 @@ def invert_relationships(user_relationships):
         inverted_user_relationships.append(new_row)
     return inverted_user_relationships
 
+
+
 def best_friend(user_index1, user_index2, all_users, user_relationships):
 	relationships = invert_relationships(user_relationships)
+	path = []
+	
 	distances = {}
-	distances[user_index2] = math.inf
+	
 	prevUsers = {}
 	visited = [user_index1]
 	user = user_index1
 	minimum = math.inf
+	count = 0
     
 	for i in range(len(relationships[user_index1])):
 		distances[i] = relationships[user_index1][i]
-    	
-	while len(visited) != len(relationships[user_index1]):
-		#minimum = math.inf
+		prevUsers[i] = user_index1
+		if relationships[user_index1][i] > 0:
+			count += 1;
+		if relationships[user_index1][i] <= 0:
+			distances.pop(i, None) #only contains direct links
+			#prevUsers.pop(i, None)
+	if count <= 1:
+		for i in range(len(distances)):
+			if distances[i] > 0:
+				if i != user_index2:
+					print("Path does not exist")
+				else:
+					path.append(user_index2)
+					return path
+	distances[user_index1] = 0
+	distances[user_index2] = math.inf
+	print(all_users)
+	print(distances)
+	
+	for i in relationships[user]:
+		if i != 0 and (relationships[user].index(i) not in visited):
+			print(relationships[user].index(i))
+			if i < minimum:
+				minimum = i
+				index = relationships[user].index(minimum)
+				
+	while len(visited) != len(distances):
+		#print(relationships(user))
 		for i in relationships[user]:
 			if i != 0 and (relationships[user].index(i) not in visited):
 				if i < minimum:
 					minimum = i
-		index = relationships[user].index(minimum)
-		visited.append(index)
-		distances[index] = min(relationships[user][index] + distances[index], distances[index])
-		user = index
+					index = relationships[user].index(minimum)
+		#print(visited)
+		#print(distances)
+		#print(prevUsers)
+		#print(minimum)
+		#print("index: " + str(index) + "; user: " + str(user))
+		if user not in visited:		
+			visited.append(user)		
+		if minimum == math.inf:
+			user = prevUsers[user]
+		else:
+			if index not in distances:
+				distances[index] = relationships[user][index] + distances[user]
+				prevUsers[index] = user
+			else:
+				distances[index] = min(relationships[user][index] + distances[user], distances[index])
+				if distances[index] == relationships[user][index] + distances[user]:
+					prevUsers[index] = user
+			user = index
+		minimum = math.inf
+	print(distances)
+	print(prevUsers)
+	if distances[user_index2] == math.inf:
+		print("Path does not exist")
+	else:
+		user = user_index2
+		while (user != user_index1):
+			path = [user] + path
+			user = prevUsers[user]
+	print(path)
+		
     	
 def main():
     data = read_file("friends.txt")
