@@ -14,6 +14,8 @@
 # See the average score of people who have you in their friend list.
 # Loops through entire graph and determines average score for each person on the graph.
 import math
+import operator
+import random
 
 def read_file(filename):
 	data = []
@@ -113,7 +115,68 @@ def invert_relationships(user_relationships):
 		inverted_user_relationships.append(new_row)
 	return inverted_user_relationships
 
+def friend_recommendation(all_users, user_relationship, user, iterations, total):
+	index = user
+	relationships= user_relationship[index]
+	relationships_dict = {}
+	for index, x in enumerate(relationships):
+		relationships_dict[index] = x
+	sorted_friends = sorted(relationships_dict.items(), key=operator.itemgetter(1))
+	top_3_friends = []
+	i = -1
+	for _ in range(3):
+		friend = sorted_friends[i]
+		if friend[1] == 0:
+			continue
+		else:
+			top_3_friends.append(sorted_friends[i])
+		i-=1
+	top_friends_tally = {}
+	for friend in top_3_friends:
+		if friend[0] in top_friends_tally:
+			top_friends_tally[friend[0]] += 1
+		else:
+			top_friends_tally[friend[0]] = 1
+	total.append(top_friends_tally)
+	if(iterations == 1):
+		return total
+	else:
+		for key in top_friends_tally:
+			val = iterations - 1
+			friend_recommendation(all_users, user_relationship, key, val, total)
+	recommendation(all_users, user_relationship, user, total)
 
+def recommendation(all_users, user_relationships, user, total):
+	options = total[1:]
+	recommendations = []
+	for option in options:
+		for friend in option:
+			# Add it to the list even if it is already in there. This will act as a weight. If a friend
+			# recommendation appears in multiple lists, it is a stronger recommendation and should have 
+			# a higher liklihood of being randomly selected
+			recommendations.append(friend)
+	if(len(recommendations) == 0):
+		print("Sorry, we don't have any recommendations for you!")
+	else:
+		selection = random.randrange(0, len(recommendations))
+		user_index = recommendations[selection]
+		selected_user = list(all_users.keys())[list(all_users.values()).index(user_index)]
+		print("We recommend adding "+selected_user+" as a user!")
+
+def popularity_score(all_users, user_relationships, user):
+	user_index = user
+	score = 0
+	friend_count = 0
+	for index, row in enumerate(user_relationships):
+		if(index == user_index):
+			continue
+		else:
+			if(row[user_index] != 0):
+				friend_count += 1
+			score += row[user_index]
+	score = score/friend_count
+	user_name = list(all_users.keys())[list(all_users.values()).index(user_index)]
+	print(user_name+" has an average friend score of "+str(score))
 
 def best_friend(user_index1, user_index2, all_users, user_relationships):
 	relationships = invert_relationships(user_relationships)
@@ -129,7 +192,7 @@ def best_friend(user_index1, user_index2, all_users, user_relationships):
 		distances[i] = relationships[user_index1][i]
 		prevUsers[i] = user_index1
 		if relationships[user_index1][i] > 0:
-			count += 1;
+			count += 1
 		if relationships[user_index1][i] <= 0:
 			distances.pop(i, None) #only contains direct links
 			#prevUsers.pop(i, None)
@@ -191,8 +254,11 @@ def main():
 	data = read_file("friends.txt")
 	all_users, user_relationships = create_user_data(data)
 	invert = invert_relationships(user_relationships)
-	menu(all_users, user_relationships)
-
+	friend_recommendation(all_users, user_relationships, 1, 2, [])
+	#menu(all_users, user_relationships)
+	# recommendation(all_users, user_relationships, 1)
+	print(user_relationships)
+	popularity_score(all_users, user_relationships, 1)
 
 if __name__ == "__main__":
 	main()
