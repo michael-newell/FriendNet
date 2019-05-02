@@ -1,10 +1,9 @@
-Ellie,Scooter,10
+Tom,Scooter,10
 Scooter,Ellie,9
-Ellie,Roland,10
 Roland,Lilith,5
 Lilith,Roland,8
 Scooter,Daisy,9
-Daisy,Scooter,1
+Daisy,Gary,1
 Dan,Ellie,5
 Dan,Scooter,6
 Dan,Roland,3

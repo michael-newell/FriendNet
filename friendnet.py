@@ -57,7 +57,9 @@ def menu(all_users, user_relationships):
 	print("1) Check if user exists")
 	print("2) Check connection between users")
 	print("3) Find best friend chain")
-	print("4) Quit")
+	print("4) Get a user reccomendation")
+	print("5) Calculate a popularity score")
+	print("6) Quit")
 	selection = int(input("> "))
 	if(selection == 1):
 		user = input("what user? ")
@@ -97,10 +99,26 @@ def menu(all_users, user_relationships):
 
 			menu(all_users, user_relationships)
 	if(selection == 4):
+		user = input("Find reccomendation for what user? ")
+		if(user not in all_users):
+			print("Error: this user does not exist.")
+		else:
+			user_index = all_users[user]
+			friend_recommendation(all_users, user_relationships, user_index, 3, [])
+			print()
+			menu(all_users, user_relationships)
+
+	if(selection == 5):
+		user = input("Calculate popularity score for what user? ")
+		if(user not in all_users):
+			print("Error: this user does not exist.")
+		else:
+			user_index = all_users[user]
+			popularity_score(all_users, user_relationships, user_index)
+			print()
+			menu(all_users, user_relationships)
+	if(selection == 6):
 		return
-	# else:
-	# 	print("Please enter a number (1-4)")
-	# 	menu(all_users, user_relationships)
 
 def invert_relationships(user_relationships):
 	inverted_user_relationships = []
@@ -131,6 +149,7 @@ def friend_recommendation(all_users, user_relationship, user, iterations, total)
 		else:
 			top_3_friends.append(sorted_friends[i])
 		i-=1
+	
 	top_friends_tally = {}
 	for friend in top_3_friends:
 		if friend[0] in top_friends_tally:
@@ -138,14 +157,14 @@ def friend_recommendation(all_users, user_relationship, user, iterations, total)
 		else:
 			top_friends_tally[friend[0]] = 1
 	total.append(top_friends_tally)
+	
 	if(iterations == 1):
+		recommendation(all_users, user_relationship, user, total)
 		return total
 	else:
 		for key in top_friends_tally:
 			val = iterations - 1
 			friend_recommendation(all_users, user_relationship, key, val, total)
-	recommendation(all_users, user_relationship, user, total)
-
 def recommendation(all_users, user_relationships, user, total):
 	options = total[1:]
 	recommendations = []
@@ -176,7 +195,7 @@ def popularity_score(all_users, user_relationships, user):
 			score += row[user_index]
 	score = score/friend_count
 	user_name = list(all_users.keys())[list(all_users.values()).index(user_index)]
-	print(user_name+" has an average friend score of "+str(score))
+	print(user_name+" has a popularity score of "+str(score))
 
 def best_friend(user_index1, user_index2, all_users, user_relationships):
 	relationships = invert_relationships(user_relationships)
@@ -254,11 +273,7 @@ def main():
 	data = read_file("friends.txt")
 	all_users, user_relationships = create_user_data(data)
 	invert = invert_relationships(user_relationships)
-	friend_recommendation(all_users, user_relationships, 1, 2, [])
-	#menu(all_users, user_relationships)
-	# recommendation(all_users, user_relationships, 1)
-	print(user_relationships)
-	popularity_score(all_users, user_relationships, 1)
+	menu(all_users, user_relationships)
 
 if __name__ == "__main__":
 	main()
